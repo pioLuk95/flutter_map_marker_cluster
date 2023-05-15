@@ -22,15 +22,13 @@ class MarkerClusterLayer extends StatefulWidget {
   final MarkerClusterLayerOptions options;
   final FlutterMapState map;
 
-  const MarkerClusterLayer(this.options, this.map, {Key? key})
-      : super(key: key);
+  const MarkerClusterLayer(this.options, this.map, {Key? key}) : super(key: key);
 
   @override
   State<MarkerClusterLayer> createState() => _MarkerClusterLayerState();
 }
 
-class _MarkerClusterLayerState extends State<MarkerClusterLayer>
-    with TickerProviderStateMixin {
+class _MarkerClusterLayerState extends State<MarkerClusterLayer> with TickerProviderStateMixin {
   late MapCalculator _mapCalculator;
   late ClusterManager _clusterManager;
   late int _maxZoom;
@@ -53,11 +51,9 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
       _centerMarkerController.isAnimating ||
       _spiderfyController.isAnimating;
 
-  bool get _zoomingIn =>
-      _zoomController.isAnimating && _currentZoom > _previousZoom;
+  bool get _zoomingIn => _zoomController.isAnimating && _currentZoom > _previousZoom;
 
-  bool get _zoomingOut =>
-      _zoomController.isAnimating && _currentZoom < _previousZoom;
+  bool get _zoomingOut => _zoomController.isAnimating && _currentZoom < _previousZoom;
 
   @override
   void initState() {
@@ -165,8 +161,7 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
           : Rotate(
               angle: -widget.map.rotationRad,
               origin: marker.rotateOrigin ?? widget.options.rotateOrigin,
-              alignment:
-                  marker.rotateAlignment ?? widget.options.rotateAlignment,
+              alignment: marker.rotateAlignment ?? widget.options.rotateAlignment,
             ),
       key: marker.key ?? ObjectKey(marker.marker),
       child: MarkerWidget(
@@ -182,18 +177,15 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
   /// Function that is called when the marker is hover (if popup building on hover is selected).
   /// if enter == true then it's onHoverEnter, if enter == false it's onHoverExit
   void _onMarkerHover(MarkerNode marker, bool enter) {
-    if (_zoomController.isAnimating ||
-        _centerMarkerController.isAnimating ||
-        _fitBoundController.isAnimating) return;
+    if (_zoomController.isAnimating || _centerMarkerController.isAnimating || _fitBoundController.isAnimating) return;
 
     if (widget.options.popupOptions != null) {
       final popupOptions = widget.options.popupOptions!;
       enter
           ? Future.delayed(
               Duration(
-                  milliseconds: popupOptions.timeToShowPopupOnHover >= 0
-                      ? popupOptions.timeToShowPopupOnHover
-                      : 0), () {
+                  milliseconds: popupOptions.timeToShowPopupOnHover >= 0 ? popupOptions.timeToShowPopupOnHover : 0),
+              () {
               popupOptions.markerTapBehavior.apply(
                 marker.marker,
                 PopupState.maybeOf(context, listen: false) ?? PopupState(),
@@ -220,18 +212,15 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
   Future<void> _unspiderfy() async {
     switch (_spiderfyController.status) {
       case AnimationStatus.completed:
-        final markersGettingClustered = _clusterManager.spiderfyCluster?.markers
-            .map((markerNode) => markerNode.marker)
-            .toList();
+        final markersGettingClustered =
+            _clusterManager.spiderfyCluster?.markers.map((markerNode) => markerNode.marker).toList();
 
-        if (widget.options.popupOptions != null &&
-            markersGettingClustered != null) {
+        if (widget.options.popupOptions != null && markersGettingClustered != null) {
           widget.options.popupOptions!.popupController.hidePopupsOnlyFor(
             markersGettingClustered,
           );
         }
-        if (widget.options.onMarkersClustered != null &&
-            markersGettingClustered != null) {
+        if (widget.options.onMarkersClustered != null && markersGettingClustered != null) {
           widget.options.onMarkersClustered!(markersGettingClustered);
         }
 
@@ -242,13 +231,11 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
             );
         break;
       case AnimationStatus.forward:
-        final markersGettingClustered = _clusterManager.spiderfyCluster?.markers
-            .map((markerNode) => markerNode.marker)
-            .toList();
+        final markersGettingClustered =
+            _clusterManager.spiderfyCluster?.markers.map((markerNode) => markerNode.marker).toList();
 
         if (markersGettingClustered != null) {
-          widget.options.popupOptions?.popupController
-              .hidePopupsOnlyFor(markersGettingClustered);
+          widget.options.popupOptions?.popupController.hidePopupsOnlyFor(markersGettingClustered);
           widget.options.onMarkersClustered?.call(markersGettingClustered);
         }
 
@@ -306,12 +293,10 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
     );
   }
 
-  void _addMarkerClusterLayer(
-      MarkerClusterNode clusterNode, List<Widget> layers) {
+  void _addMarkerClusterLayer(MarkerClusterNode clusterNode, List<Widget> layers) {
     if (_zoomingOut && clusterNode.children.length > 1) {
       _addClusterClosingLayer(clusterNode, layers);
-    } else if (_zoomingIn &&
-        clusterNode.parent!.bounds.center != clusterNode.bounds.center) {
+    } else if (_zoomingIn && clusterNode.parent!.bounds.center != clusterNode.bounds.center) {
       _addClusterOpeningLayer(clusterNode, layers);
     } else if (_clusterManager.isSpiderfyCluster(clusterNode)) {
       layers.addAll(_buildSpiderfyCluster(clusterNode, _currentZoom));
@@ -330,8 +315,7 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
     }
   }
 
-  void _addClusterClosingLayer(
-      MarkerClusterNode clusterNode, List<Widget> layers) {
+  void _addClusterClosingLayer(MarkerClusterNode clusterNode, List<Widget> layers) {
     // cluster
     layers.add(
       MapWidget(
@@ -393,8 +377,7 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
     widget.options.onMarkersClustered?.call(markersGettingClustered);
   }
 
-  void _addClusterOpeningLayer(
-      MarkerClusterNode clusterNode, List<Widget> layers) {
+  void _addClusterOpeningLayer(MarkerClusterNode clusterNode, List<Widget> layers) {
     // cluster
     layers.add(MapWidget(
       size: clusterNode.size(),
@@ -502,13 +485,11 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
     final recursionBounds = _extendBounds(widget.map.bounds, 0.5);
 
     _clusterManager.recursivelyFromTopClusterLevel(
-        _currentZoom, widget.options.disableClusteringAtZoom, recursionBounds,
-        (MarkerOrClusterNode layer) {
+        _currentZoom, widget.options.disableClusteringAtZoom, recursionBounds, (MarkerOrClusterNode layer) {
       // This is the performance critical hot path recursed on every map event!
 
       // Cull markers/clusters that are not on screen.
-      if (!widget.map.pixelBounds
-          .containsPartialBounds(layer.pixelBounds(widget.map))) {
+      if (!widget.map.pixelBounds.containsPartialBounds(layer.pixelBounds(widget.map))) {
         return;
       }
 
@@ -564,11 +545,9 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
       );
 
       // check if children can un-cluster
-      final cannotDivide = cluster.markers.every((marker) =>
-              marker.parent!.zoom == _maxZoom &&
-              marker.parent == cluster.markers.first.parent) ||
-          (dest.zoom == _currentZoom &&
-              _currentZoom == widget.options.fitBoundsOptions.maxZoom);
+      final cannotDivide = cluster.markers
+              .every((marker) => marker.parent!.zoom == _maxZoom && marker.parent == cluster.markers.first.parent) ||
+          (dest.zoom == _currentZoom && _currentZoom == widget.options.fitBoundsOptions.maxZoom);
 
       if (cannotDivide) {
         dest = CenterZoom(center: dest.center, zoom: _currentZoom.toDouble());
@@ -587,18 +566,14 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
         _showPolygon(cluster.markers.map((m) => m.point).toList());
       }
 
-      final latTween =
-          Tween<double>(begin: center.latitude, end: dest.center.latitude);
-      final lonTween =
-          Tween<double>(begin: center.longitude, end: dest.center.longitude);
+      final latTween = Tween<double>(begin: center.latitude, end: dest.center.latitude);
+      final lonTween = Tween<double>(begin: center.longitude, end: dest.center.longitude);
       final zoomTween = Tween<double>(begin: widget.map.zoom, end: dest.zoom);
 
-      final animation = CurvedAnimation(
-          parent: _fitBoundController,
-          curve: widget.options.animationsOptions.fitBoundCurves);
+      final animation =
+          CurvedAnimation(parent: _fitBoundController, curve: widget.options.animationsOptions.fitBoundCurves);
 
-      final listener = _centerMarkerListener(animation, latTween, lonTween,
-          zoomTween: zoomTween);
+      final listener = _centerMarkerListener(animation, latTween, lonTween, zoomTween: zoomTween);
 
       _fitBoundController.addListener(listener);
 
@@ -632,10 +607,8 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
       if (!widget.options.centerMarkerOnClick) return;
 
       final center = widget.map.center;
-      final latTween =
-          Tween<double>(begin: center.latitude, end: marker.point.latitude);
-      final lonTween =
-          Tween<double>(begin: center.longitude, end: marker.point.longitude);
+      final latTween = Tween<double>(begin: center.latitude, end: marker.point.latitude);
+      final lonTween = Tween<double>(begin: center.longitude, end: marker.point.longitude);
 
       final Animation<double> animation = CurvedAnimation(
         parent: _centerMarkerController,
@@ -711,16 +684,14 @@ class _MarkerClusterLayerState extends State<MarkerClusterLayer>
 LatLngBounds _extendBounds(LatLngBounds bounds, double stickonFactor) {
   final sw = bounds.southWest;
   final ne = bounds.northEast;
-  final height = (sw!.latitude - ne!.latitude).abs() * stickonFactor;
+  final height = (sw.latitude - ne!.latitude).abs() * stickonFactor;
   final width = (sw.longitude - ne.longitude).abs() * stickonFactor;
 
   // Clamp rather than wrap around. This function is used in the context of
   // drawing things onto a map. Since the map renderer does't wrap maps itself,
   // we also shouldn't wrap around the bounding boxes.
-  final point1 = LatLng((bounds.south - height).clamp(-90, 90),
-      (bounds.west - width).clamp(-180, 180));
-  final point2 = LatLng((bounds.north + height).clamp(-90, 90),
-      (bounds.east + width).clamp(-180, 180));
+  final point1 = LatLng((bounds.south - height).clamp(-90, 90), (bounds.west - width).clamp(-180, 180));
+  final point2 = LatLng((bounds.north + height).clamp(-90, 90), (bounds.east + width).clamp(-180, 180));
 
   return LatLngBounds(point1, point2);
 }

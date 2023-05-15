@@ -40,8 +40,7 @@ class _Derived {
 
     bounds = markerNodes.isEmpty
         ? null
-        : LatLngBounds.fromPoints(List<LatLng>.generate(
-            markerNodes.length, (index) => markerNodes[index].point));
+        : LatLngBounds.fromPoints(List<LatLng>.generate(markerNodes.length, (index) => markerNodes[index].point));
 
     markers = markerNodes.map((m) => m.marker).toList();
     size = computeSize?.call(markers);
@@ -75,8 +74,7 @@ class MarkerClusterNode extends MarkerOrClusterNode {
   /// LatLong bounds of the transitive markers covered by this cluster.
   /// Note, hacky way of dealing with now null-safe LatLngBounds. Ideally we'd
   // return null here for nodes that are empty and don't have bounds.
-  LatLngBounds get bounds =>
-      _derived.bounds ?? LatLngBounds(LatLng(0, 0), LatLng(0, 0));
+  LatLngBounds get bounds => _derived.bounds ?? LatLngBounds(LatLng(0, 0), LatLng(0, 0));
 
   Size size() => _derived.size ?? predefinedSize;
 
@@ -108,8 +106,7 @@ class MarkerClusterNode extends MarkerOrClusterNode {
       // draw any smaller levels
       return;
     }
-    assert(zoom <= disableClusteringAtZoom,
-        '$zoom $disableClusteringAtZoom $zoomLevel');
+    assert(zoom <= disableClusteringAtZoom, '$zoom $disableClusteringAtZoom $zoomLevel');
 
     for (final child in children) {
       if (child is MarkerNode) {
@@ -118,15 +115,14 @@ class MarkerClusterNode extends MarkerOrClusterNode {
         // OPTIMIZATION: Skip clusters that don't overlap with given recursion
         // (map) bounds. Their markers would get culled later anyway.
         if (recursionBounds.isOverlapping(child.bounds)) {
-          child.recursively(
-              zoomLevel, disableClusteringAtZoom, recursionBounds, fn);
+          child.recursively(zoomLevel, disableClusteringAtZoom, recursionBounds, fn);
         }
       }
     }
   }
 
   @override
-  Bounds pixelBounds(FlutterMapState map) {
+  Bounds<double> pixelBounds(FlutterMapState map) {
     final width = size().width;
     final height = size().height;
     final anchor = Anchor.forPos(anchorPos, width, height);
@@ -136,10 +132,8 @@ class MarkerClusterNode extends MarkerOrClusterNode {
     final bottomPortion = height - anchor.top;
     final topPortion = anchor.top;
 
-    final ne =
-        map.project(bounds.northEast!) + CustomPoint(rightPortion, -topPortion);
-    final sw = map.project(bounds.southWest!) +
-        CustomPoint(-leftPortion, bottomPortion);
+    final ne = map.project(bounds.northEast) + CustomPoint(rightPortion, -topPortion);
+    final sw = map.project(bounds.southWest) + CustomPoint(-leftPortion, bottomPortion);
 
     return Bounds(ne, sw);
   }
